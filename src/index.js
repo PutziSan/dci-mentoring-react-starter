@@ -1,65 +1,79 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-console.log("start - this is not a problem");
-
-const myArray = [1, 2, 3, 4, 5];
-
-function range(length) {
-  const arr = [];
-  for (let i = 0; i < length; i++) {
-    arr[i] = i;
+function renderApp(
+  // state looks like { information: ["..."], activeInfo: "..." }
+  state
+) {
+  function updateApp(newPartialState) {
+    renderApp({
+      ...state,
+      ...newPartialState,
+    });
   }
-  return arr;
+
+  ReactDOM.render(
+    <div>
+      <h1>My App about a user</h1>
+      {state.information.map((info) => {
+        return (
+          <div key={info}>
+            <h2
+              onClick={() => {
+                // when clicking on the headline, the text for this info should appear:
+                updateApp({ activeInformation: info });
+              }}
+            >
+              {info}
+            </h2>
+            {info === state.activeInformation ? (
+              <p>
+                Some information about {info}:
+                <br />
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </p>
+            ) : /* null in JSX means "render nothing" */ null}
+          </div>
+        );
+      })}
+
+      <div>
+        <p>last exercise:</p>
+        <ul>
+          <li>create a basic "accordion" with react!</li>
+          <li>
+            like before: create a `renderApp(state)` function, which wrap the
+            `ReactDOM.render(...)`
+          </li>
+          <li>
+            in your state-object, use 2 properties: information (an array of
+            strings) and activeInfo (string)
+          </li>
+          <li>
+            in your JSX markup, render for each information the headline and
+            some text for the info (via state.information.map)
+          </li>
+          <li>
+            for each info-headline, create an onClick-handler which changes the
+            activeInfo to the activeInfo of the clicked headline
+          </li>
+        </ul>
+      </div>
+    </div>,
+    document.getElementById("root")
+  );
 }
 
-ReactDOM.render(
-  // if i start with an html syntax, i can no longer use "normal" javascript-syntax:
-  // below starts the jsx-part:
-  <div>
-    {/* here i am inside jsx, javascript is not working "normal" */}
-    console.log("this is a problem, because this will not work!")
-    {/* in jsx and VS code, you can create comments with ctrl + / (strg + /) */}
-    {/* in jsx you can write "normal" javascript, if you wrap it inside curly
-    braces: "{" and "}"
-    */}
-    {console.log(
-      "this again is not a problem, because this will work again and log it!"
-    )}
-    <a href="https//google.com">this is a link</a>
-    <p>this is a paragraph inside js - crazy!</p>
-    <p>lets use the component:</p>
-    <MyComponent />
-    <p>use an array to render something:</p>
-    <ul>
-      {["Martha", "Simba", "Felix"].map((name) => {
-        // the key attribute is important so that react
-        // can correctly test how often the component needs to rerender it
-        // it is a performance issue:
-        // without a key, react needs to rerender the child elements with every
-        // rerender of the parent
-        return <li key={name}>{name}</li>;
-      })}
-    </ul>
-    <p>I also can use my functional components inside the lists:</p>
-    <div>
-      {range(10).map((number) => {
-        return <MyComponent key={number} />;
-      })}
-    </div>
-    <p>of course you can just use arrays which are stored in a variable:</p>
-    <div>
-      {myArray.map((number) => {
-        return <div key={number}>this is the component: {number}</div>;
-      })}
-    </div>
-  </div>,
-  // here the jsx part ends, so normal javascript again:
-  // -----
-  // the root element is defined inside public/index.html
-  document.getElementById("root")
-);
-
-function MyComponent() {
-  return <div>my cool component</div>;
-}
+const initialState = {
+  // normally this would come from a server and
+  information: ["Name", "E-Mail", "Age"],
+  // activeInfo will be changed by the app:
+  activeInfo: "Name",
+};
+renderApp(initialState);
